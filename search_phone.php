@@ -9,54 +9,24 @@ $searchq=preg_replace("#[^0-9a-z]#i","",$searchq);
  $query=mysqli_query($conn,"SELECT * FROM contacts WHERE name LIKE '%$searchq%' ");
 $count=mysqli_num_rows($query);
 $t=$count;
-//echo $t;
-//echo"<br>";
 if($count==0){
-  //print_r("There was no search results");
   $output ='There was no search results';
 }
 else{
   while($row=mysqli_fetch_array($query)){
     //echo $t;
+   $id[$t]=$row['id'];
    $Name[$t]=$row['name'];
    $DOB[$t]=$row['DOB'];
    $mobile[$t]=$row['mobile'];
    $Email[$t]=$row['Email'];
-   
-   /*print_r($mobile[$t]);
-   echo "<br>";
-   print_r($Email[$t]);
-   echo "change";*/
-
+  
    $mob[$t]=explode(",",$mobile[$t]);
    $Em[$t]=explode(",",$Email[$t]);
-
-/*
-   print_r ($mob[$t]);
-   print_r ($Em[$t]);*/
-   
+  
    $t--;
-    //$DOB=$row['DOB'];
-    //$mobile=$row['mobile'];
-    //$Email=$row['Email'];
-    //$output .='<div>'.$Name.'<div>';
-   // $output .='<div>'.$Name.'<div>'.$DOB.'<div>'.$mobile.'<div>'.$Email.''; //   .= and = both are the difference
   }
 }
-//print("ss"."$count");
-/*for($i=$count;$i>0;$i--){
-  echo $Name[$i];
-  echo "<br>";
-  echo $DOB[$i];
-  echo "<br>";
-  echo $mob[$i];
-  echo "<br>";
-  echo $Em[$i];
-  echo "<br>";
-}*/
- // $n1=mysqli_fetch_assoc($query);
- //$_SESSION['search']=$n1;
- //print $_SESSION['search'];
  }
 ?>
 
@@ -144,8 +114,6 @@ else{
 
 
 <br><br><br>
-<?php// print("$output"); ?>
-
 <?php
 if(isset($_POST['submit'])){
 if($count==0){
@@ -169,10 +137,11 @@ for($i=$count;$i>0;$i--){
     <div class="card">
   
       <div class="card-header">
-        <a class="card-link" data-toggle="collapse" href="#collapse<?php echo $i; ?>">
+           <a class="card-link" data-toggle="collapse" href="#collapse<?php echo $i; ?>">
          
          <div style="" align="right">
          <i class="arrow down"></i>
+         
          </div>
          <?php echo $Name[$i]; ?>
         </a>
@@ -185,8 +154,7 @@ for($i=$count;$i>0;$i--){
         
       
          <div style="" align="right">
-         <button type="submit" name="Edit" class="btn btn-primary" >Edit</button>
-        <!-- <button type="button" class="btn btn-danger" onclick="delete_data('<?php echo $Name[$i];?>')">Delete</button>-->
+         <button type="submit" name="Edit" class="btn btn-primary"  onclick="update_data(<?php echo $id[$i]; ?>)">Edit</button>
            
            <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#myModal<?php echo $i; ?>">
            Delete
@@ -213,7 +181,7 @@ for($i=$count;$i>0;$i--){
        
         <div class="modal-footer">
           
-         <button type="button" class="btn btn-danger" onclick="delete_data('<?php echo $Name[$i];?>')">Delete</button>
+         <button type="button" class="btn btn-danger" onclick="delete_data('<?php echo $Name[$i];?>')">confirm</button>
         </div>
         
       </div>
@@ -251,16 +219,14 @@ for($i=$count;$i>0;$i--){
             <?php
             echo"<br>";
           }
-          //print_r( $mob[$i]); echo "<br>";
-        //  print_r($Em[$i]);
          
-         ?><!--  pattern change -->
+         ?>
         </div>
 
 
         </div>
         </div>
-<!------------------------------------------------------------>  
+<!-------------------------------------------------------------------------------------------------------------------->  
 </div>
 <?php
 }
@@ -274,20 +240,24 @@ for($i=$count;$i>0;$i--){
   <?php
 }
 ?>
-<br>
-<br>
-<br>
-<br>
+<br><br><br><br>
 
-
+<!-------------------------------------------------------------------------------------------------------------------->  
+<script type="text/javascript">
+function  update_data(d) {
+  var id=d; 
+  location.replace("update_phone.php?id="+id+"");
+}
+</script>
+<!-------------------------------------------------------------------------------------------------------------------->  
 <script type="text/javascript">
   function delete_data(d){
-    var id=d;
+    var name=d;
     //console.log(id);
     $.ajax({
       type: "post",
       url: "delete.php",
-      data: {id:id},
+      data: {name:name},
       success : function(data) {
         location.reload();
       }
